@@ -1,0 +1,63 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+ Role        Level         Count
+
+INPUT      INTERVAL           6   
+INPUT      NOMINAL           10   
+TARGET     NOMINAL            1   
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Output Table Attributes
+
+Attribute            Value
+
+Output Table         EMWS1.Ids_DATA
+Output Type          View          
+Dropped Variables    0             
+Data Mining Role     Raw           
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Input Table Attributes
+
+Attribute                                  Value
+
+Data Source                                fftsales          
+                                                             
+Library Name                               DATA              
+Library Member Name                        FFTSALES          
+Data Set Label                                               
+Special Data Set Type (From TYPE=)                           
+Observations in Data Set                   45211             
+Engine Name                                BASE              
+Create Date                                09Oct2018:11:33:23
+Last Modified Date                         09Oct2018:11:33:23
+Deleted Observations in Data Set           0                 
+Use of Variable in Indexes                 NONE              
+Library Member Type                        DATA              
+Number of Indexes for Data Set             0                 
+Password Protection (Read Write Alter)     ---               
+Update Flags (Protect Contribute Add)      ---               
+Compression Routine                        NO                
+Reuse Space                                NO                
+Sorted and/or Validated                    .                 
+Position of Variable in Sortedby Clause    .                 
+Host Character Set                                           
+Collating Sequence                                           
+Sort Option: No Duplicate Keys             NO                
+Sort Option: No Duplicate Records          NO                
+Encryption Routine                         NO                
+Point to Observations                      YES               
+Maximum Number of Generations              0                 
+Generation Number                          .                 
+Next Generation Number                     .                 
+Character Variables Transcoded             YES               
+Variables                                  17                

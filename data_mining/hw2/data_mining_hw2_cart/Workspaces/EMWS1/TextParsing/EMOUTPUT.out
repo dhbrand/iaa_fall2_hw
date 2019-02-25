@@ -1,0 +1,65 @@
+*------------------------------------------------------------*
+User:                Ryan Carr
+Date:                October 15, 2018
+Time:                21:18:20
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+        Measurement    Frequency
+Role       Level         Count
+ 
+TEXT      NOMINAL          1
+ 
+ 
+ 
+ 
+ 
+The HPTMINE Procedure
+ 
+      Performance Information
+ 
+Execution Mode       Single-Machine
+Number of Threads    4
+ 
+ 
+                  Data Access Information
+ 
+Data                          Engine    Role      Path
+ 
+EMWS1.TEXTPARSING_TRAIN       V9        Input     On Client
+EMWS1.TEXTPARSING_TMOUTPOS    V9        Output    On Client
+EMWS1.TEXTPARSING_TMOUT       V9        Output    On Client
+EMWS1.TEXTPARSING_TERMS       V9        Output    On Client
+EMWS1.TEXTPARSING_TMCONFIG    V9        Output    On Client
+ 
+ 
+                 Procedure Task Timing
+ 
+Task                                Seconds      Percent
+ 
+ Parse documents                       3.91      81.31%
+ Index documents                       0.36       7.42%
+ Output raw parsing results            0.03       0.54%
+ Analyze terms                         0.14       2.93%
+ Obtain term frequency                 0.11       2.20%
+ Filter terms                          0.09       1.79%
+ Generate term-document matrix         0.00       0.00%
+ Output OUTCHILD table                 0.05       0.96%
+ Output OUTTERMS table                 0.13       2.62%
+ Output OUTCONFIG table                0.01       0.23%
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

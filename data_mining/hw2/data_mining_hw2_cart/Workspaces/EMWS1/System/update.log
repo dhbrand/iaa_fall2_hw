@@ -1,0 +1,132 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 
+Traverser: Traverser invoked.  MPCONNECT command is sas. 
+Traverser: Beginning flow traversal 
+*------------------------------------------------------------* 
+* 
+* Ids : Beginning Update 
+* datetime : 15OCT2018:19:43:00 
+* 
+*------------------------------------------------------------* 
+13616      %let _HPDMGRIDHOST=;
+13617      %let _HPDMGRIDINSTALLLOC=;
+13618      %let _HPDMGRIDDATASERVER=;
+13619      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Ids : End Update 
+* datetime : 15OCT2018:19:43:01 
+* 
+*------------------------------------------------------------* 
+Traverser: WaitingNode "TEXTPARSING" 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* Part : Beginning Update 
+* datetime : 15OCT2018:19:43:01 
+* 
+*------------------------------------------------------------* 
+13638      %let _HPDMGRIDHOST=;
+13639      %let _HPDMGRIDINSTALLLOC=;
+13640      %let _HPDMGRIDDATASERVER=;
+13641      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* Part : End Update 
+* datetime : 15OCT2018:19:43:01 
+* 
+*------------------------------------------------------------* 
+traverser_readyNode_note 
+*------------------------------------------------------------* 
+* 
+* TextParsing : Beginning Update 
+* datetime : 15OCT2018:19:43:02 
+* 
+*------------------------------------------------------------* 
+PERFORMANCE  DETAILS
+13889      %let emexceptionString =;
+13890      %let EMEXCEPTIONSTRING=;
+13891      *------------------------------------------------------------*;
+13892      * UPDATE: TextParsing;
+13893      *------------------------------------------------------------*;
+13894      %let EM_ACTION = UPDATE;
+13895      %let syscc = 0;
+13896      %macro main();
+13897        %if %upcase(&EM_ACTION) eq CREATE %then %do;
+13898          filename temp catalog 'sashelp.emtxtext.parse_create.source';
+13899          %include temp;
+13900          %create();
+13901        %end;
+13902        %if %upcase(&EM_ACTION) eq TRAIN %then %do;
+13903          filename temp catalog 'sashelp.emtxtext.parse_train.source';
+13904          %include temp;
+13905          %train();
+13906        %end;
+13907        %if %upcase(&EM_ACTION) eq REPORT %then %do;
+13908          filename temp catalog 'sashelp.emtxtext.parse_report.source';
+13909          %include temp;
+13910          %report();
+13911        %end;
+13912        %if %upcase(&EM_ACTION) eq SCORE %then %do;
+13913          filename temp catalog 'sashelp.emtxtext.parse_score.source';
+13914          %include temp;
+13915          %score();
+13916        %end;
+13917          %if %upcase(&EM_ACTION) eq OPENTABLE1 %then %do;
+13918             filename temp catalog 'sashelp.emtxtext.parse_actions.source';
+13919             %include temp;
+13920             filename temp;
+13921             %openTable1;
+13922         %end;
+13923      %mend main;
+13924      
+13925      %main();
+13926      *------------------------------------------------------------*;
+13927      * End UPDATE: TextParsing;
+13928      *------------------------------------------------------------*;
+13929      
+13930      
+13931      
+13932      
+
+13933      %em_delMacro;
+
+13935      %let _HPDMGRIDHOST=;
+13936      %let _HPDMGRIDINSTALLLOC=;
+13937      %let _HPDMGRIDDATASERVER=;
+13938      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* TextParsing : End Update 
+* datetime : 15OCT2018:19:43:02 
+* 
+*------------------------------------------------------------* 
+Traverser: Run Completed 
+13939      proc printto;
+13940      run;
+

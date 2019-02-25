@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  Location="CATALOG" Catalog="SASHELP.EMTXTEXT.FILTER.SOURCE" spellCheck="N" spellSensitivity="Med"
+ cellWeight="DEFAULT" termWeight="IDF" minDocs="4" maxTerms="." resultTerms="ALL"
+ maxviewTerms="20000" ForceRun="N" RunAction="Train" Component="TextFilter" spellDict=""
+ searchPhrase="" searchVar="" whereDoc="((^( tweets ? &quot;free&quot; )) &amp; (^( tweets ? &quot;win&quot; )))"
+ lastfilternode="" lastparsenode="" synonymImport="" saveSynDS="" spellDS="" RawCreateTime="1855251847.8"
+ CreateTime="15OCT2018:19:44:08" interStopDS="" interSynDS="" filters="" RunId="f269e5d4-79d8-4021-83ab-333ac2386393"
+>
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES ><![CDATA[
+USERTRAINCODE
+USERSCORECODE
+USERREPORTCODE
+SYNONYMIMPORT
+]]>
+</FILEPROPERTIES></_ROOT_>

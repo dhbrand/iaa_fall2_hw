@@ -1,0 +1,6 @@
+proc arima data=hw.well_trig plot=all /*plot(only)=(residual(wn))*/;
+identify var=corrected(1,8760) crosscorr=(s1 c1 s2 c2 s3 c3 s4 c4 s5 c5) minic scan esacf p=(0:20) q=(0:20); 
+estimate p=2 q=15 input=(s1 c1 s2 c2 s3 c3 s4 c4 s5 c5);
+forecast back=8760 lead=8760 noprint;
+run;
+quit;

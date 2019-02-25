@@ -1,0 +1,122 @@
+*------------------------------------------------------------*
+User:                IAA-Student
+Date:                October 04, 2018
+Time:                22:38:10
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+Role         Level         Count
+ 
+ID         INTERVAL          1
+TARGET     NOMINAL           1
+ 
+ 
+ 
+ 
+Association Report
+ 
+              Expected
+             Confidence    Confidence    Support              Transaction
+Relations       (%)           (%)          (%)        Lift       Count       Rule                                                            Left Hand of Rule
+ 
+      2         13.21         82.56        9.02       6.25      767.00       Filet Mignon ==> Blackstone Merlot                              Filet Mignon
+      2         10.93         68.30        9.02       6.25      767.00       Blackstone Merlot ==> Filet Mignon                              Blackstone Merlot
+      3         17.63         52.57        3.73       2.98      317.00       Steamed Seasonal Veg & Duckhorn Chardonnay ==> Roast Chicken    Steamed Seasonal Veg & Duckhorn Chardonnay
+      3          7.09         21.16        3.73       2.98      317.00       Roast Chicken ==> Steamed Seasonal Veg & Duckhorn Chardonnay    Roast Chicken
+      3          4.47         12.77        3.73       2.86      317.00       Duckhorn Chardonnay ==> Roasted Root Veg & Roast Chicken        Duckhorn Chardonnay
+      3         29.22         83.42        3.73       2.86      317.00       Roasted Root Veg & Roast Chicken ==> Duckhorn Chardonnay        Roasted Root Veg & Roast Chicken
+      3          4.57         12.77        3.73       2.80      317.00       Duckhorn Chardonnay ==> Steamed Seasonal Veg & Roast Chicken    Duckhorn Chardonnay
+      3         29.22         81.70        3.73       2.80      317.00       Steamed Seasonal Veg & Roast Chicken ==> Duckhorn Chardonnay    Steamed Seasonal Veg & Roast Chicken
+      3          7.59         21.16        3.73       2.79      317.00       Roast Chicken ==> Roasted Root Veg & Duckhorn Chardonnay        Roast Chicken
+      3         17.63         49.15        3.73       2.79      317.00       Roasted Root Veg & Duckhorn Chardonnay ==> Roast Chicken        Roasted Root Veg & Duckhorn Chardonnay
+      2         17.63         48.41       14.14       2.75      1202.0       Duckhorn Chardonnay ==> Roast Chicken                           Duckhorn Chardonnay
+      2         29.22         80.24       14.14       2.75      1202.0       Roast Chicken ==> Duckhorn Chardonnay                           Roast Chicken
+      2         29.22         71.90       12.98       2.46      1103.0       Duck ==> Duckhorn Chardonnay                                    Duck
+      2         18.05         44.42       12.98       2.46      1103.0       Duckhorn Chardonnay ==> Duck                                    Duckhorn Chardonnay
+      3         29.22         71.79        3.29       2.46      280.00       Roasted Root Veg & Duck ==> Duckhorn Chardonnay                 Roasted Root Veg & Duck
+      3          4.59         11.28        3.29       2.46      280.00       Duckhorn Chardonnay ==> Roasted Root Veg & Duck                 Duckhorn Chardonnay
+      3         29.22         70.59        2.82       2.42      240.00       Steamed Seasonal Veg & Duck ==> Duckhorn Chardonnay             Steamed Seasonal Veg & Duck
+      3          7.59         18.25        3.29       2.41      280.00       Duck ==> Roasted Root Veg & Duckhorn Chardonnay                 Duck
+      3         18.05         43.41        3.29       2.41      280.00       Roasted Root Veg & Duckhorn Chardonnay ==> Duck                 Roasted Root Veg & Duckhorn Chardonnay
+      3         18.05         39.80        2.82       2.21      240.00       Steamed Seasonal Veg & Duckhorn Chardonnay ==> Duck             Steamed Seasonal Veg & Duckhorn Chardonnay
+      3          7.09         15.65        2.82       2.21      240.00       Duck ==> Steamed Seasonal Veg & Duckhorn Chardonnay             Duck
+      3         55.29         93.78        6.57       1.70      558.00       Pork Tenderloin & Mashed Potatoes ==> Cantina Pinot Bianco      Pork Tenderloin & Mashed Potatoes
+      3          7.00         11.87        6.57       1.70      558.00       Cantina Pinot Bianco ==> Pork Tenderloin & Mashed Potatoes      Cantina Pinot Bianco
+      3          7.34         12.45        6.88       1.70      585.00       Cantina Pinot Bianco ==> Pork Tenderloin & Baked Beans          Cantina Pinot Bianco
+      3         55.29         93.75        6.88       1.70      585.00       Pork Tenderloin & Baked Beans ==> Cantina Pinot Bianco          Pork Tenderloin & Baked Beans
+ 
+ 
+                                                                                                                                               Rule      Rule
+Right Hand of Rule                            Rule Item 1             Rule Item 2             Rule Item 3             Rule Item 4             Item 5    Index
+ 
+Blackstone Merlot                             Filet Mignon            ===================>    Blackstone Merlot                                            1
+Filet Mignon                                  Blackstone Merlot       ===================>    Filet Mignon                                                 2
+Roast Chicken                                 Steamed Seasonal Veg    Duckhorn Chardonnay     ===================>    Roast Chicken                        4
+Steamed Seasonal Veg & Duckhorn Chardonnay    Roast Chicken           ===================>    Steamed Seasonal Veg    Duckhorn Chardonnay                  3
+Roasted Root Veg & Roast Chicken              Duckhorn Chardonnay     ===================>    Roasted Root Veg        Roast Chicken                        5
+Duckhorn Chardonnay                           Roasted Root Veg        Roast Chicken           ===================>    Duckhorn Chardonnay                  6
+Steamed Seasonal Veg & Roast Chicken          Duckhorn Chardonnay     ===================>    Steamed Seasonal Veg    Roast Chicken                        7
+Duckhorn Chardonnay                           Steamed Seasonal Veg    Roast Chicken           ===================>    Duckhorn Chardonnay                  8
+Roasted Root Veg & Duckhorn Chardonnay        Roast Chicken           ===================>    Roasted Root Veg        Duckhorn Chardonnay                  9
+Roast Chicken                                 Roasted Root Veg        Duckhorn Chardonnay     ===================>    Roast Chicken                       10
+Roast Chicken                                 Duckhorn Chardonnay     ===================>    Roast Chicken                                               11
+Duckhorn Chardonnay                           Roast Chicken           ===================>    Duckhorn Chardonnay                                         12
+Duckhorn Chardonnay                           Duck                    ===================>    Duckhorn Chardonnay                                         13
+Duck                                          Duckhorn Chardonnay     ===================>    Duck                                                        14
+Duckhorn Chardonnay                           Roasted Root Veg        Duck                    ===================>    Duckhorn Chardonnay                 16
+Roasted Root Veg & Duck                       Duckhorn Chardonnay     ===================>    Roasted Root Veg        Duck                                15
+Duckhorn Chardonnay                           Steamed Seasonal Veg    Duck                    ===================>    Duckhorn Chardonnay                 17
+Roasted Root Veg & Duckhorn Chardonnay        Duck                    ===================>    Roasted Root Veg        Duckhorn Chardonnay                 18
+Duck                                          Roasted Root Veg        Duckhorn Chardonnay     ===================>    Duck                                19
+Duck                                          Steamed Seasonal Veg    Duckhorn Chardonnay     ===================>    Duck                                21
+Steamed Seasonal Veg & Duckhorn Chardonnay    Duck                    ===================>    Steamed Seasonal Veg    Duckhorn Chardonnay                 20
+Cantina Pinot Bianco                          Pork Tenderloin         Mashed Potatoes         ===================>    Cantina Pinot Bianco                23
+Pork Tenderloin & Mashed Potatoes             Cantina Pinot Bianco    ===================>    Pork Tenderloin         Mashed Potatoes                     22
+Pork Tenderloin & Baked Beans                 Cantina Pinot Bianco    ===================>    Pork Tenderloin         Baked Beans                         24
+Cantina Pinot Bianco                          Pork Tenderloin         Baked Beans             ===================>    Cantina Pinot Bianco                25
+ 
+ 
+ 
+ 
+Rule Statistics
+ 
+The MEANS Procedure
+ 
+Variable    Label                          Minimum         Maximum            Mean
+----------------------------------------------------------------------------------
+EXP_CONF    Expected Confidence(%)       4.4711142      56.3125074      28.1382585
+CONF        Confidence(%)               10.9486001      95.1219512      38.0374744
+SUPPORT     Support(%)                   2.8238616      52.1590775       7.6567584
+LIFT        Lift                         0.2009670       6.2483842       1.4848025
+----------------------------------------------------------------------------------
+ 
+ 
+ 
+Sequence Report
+ 
+The FREQ Procedure
+ 
+                          Relations
+ 
+                                     Cumulative    Cumulative
+SET_SIZE    Frequency     Percent     Frequency      Percent
+-------------------------------------------------------------
+       2          60       50.42            60        50.42
+       3          59       49.58           119       100.00
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

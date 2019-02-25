@@ -1,0 +1,1005 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                October 16, 2018
+Time:                22:33:06
+*------------------------------------------------------------*
+17139  %let EMEXCEPTIONSTRING=;
+17140  *------------------------------------------------------------*;
+17141  * SCORE: TextFilter;
+17142  *------------------------------------------------------------*;
+17143  %let EM_ACTION = SCORE;
+17144  %let syscc = 0;
+17145  %macro main();
+17146      %if %upcase("&EM_ACTION") eq "CREATE" %then %do;
+17147          filename temp catalog 'sashelp.emtxtext.filter_create.source';
+17148          %include temp;
+17149          %create();
+17150      %end;
+17151      %if %upcase("&EM_ACTION") eq "TRAIN" %then %do;
+17152          filename temp catalog 'sashelp.emtxtext.filter_train.source';
+17153          %include temp;
+17154          %train();
+17155      %end;
+17156      %if %upcase("&EM_ACTION") eq "SCORE" %then %do;
+17157          filename temp catalog 'sashelp.emtxtext.filter_score.source';
+17158          %include temp;
+17159          %score();
+17160      %end;
+17161      %if %upcase("&EM_ACTION") eq "REPORT" %then %do;
+17162          filename temp catalog 'sashelp.emtxtext.filter_report.source';
+17163          %include temp;
+17164         %report();
+17165      %end;
+17166       %if %upcase(&EM_ACTION) eq OPENTABLE1 %then %do;
+17167         filename temp catalog 'sashelp.emtxtext.filter_actions.source';
+17168         %include temp;
+17169         filename temp;
+17170         %openTable1;
+17171     %end;
+17172  %mend main;
+17173  
+17174  %main();
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMTXTEXT.FILTER_SCORE.SOURCE.
+17175 +/* ****************************************************************
+17176 + * Copyright (C) 2009 by SAS Institute Inc., Cary, NC 27513
+17177 + *
+17178 + * Name:             filter_score.sas
+17179 + * Product:          SAS Text Miner
+17180 + * Language:         Sas
+17181 + * Script:
+17182 + *
+17183 + * Usage:
+17184 + *
+17185 + * Purpose:          to score the Text Filter node.
+17186 + *
+17187 + * History:
+17188 + * 21Aug09 Initial Coding
+17189 + *
+17190 + * Notes:
+17191 + *
+17192 + * Last Modified By:
+17193 + * Last Modified On: Tue Sep 16 14:00:00 2014
+17194 + *
+17195 + * End
+17196 + * ************************************************************** */
+17197 +%macro tmf_score(import=, export=, import_out=, export_out=, export_trans=,
+17198 +                 termds=, config_ds=,
+17199 +                 parsevar=,where_phrase_param=,search_ds=,varprefix=,multiterm=);
+17200 +   %if &import ne %then %do;
+17202 +      data &export;
+17203 +      set &import;
+17204 +      if "&where_phrase_param." ne "" then do;
+17205 +          where %unquote(&where_phrase_param.);
+17206 +      end;
+17207 +      _document_=_n_;
+17208 +      rc=tgscore(&parsevar,"&config_ds","&termds","&export_out",
+17209 +                  %if %superq(multiterm) ne %then "&multiterm"; %else 0;,
+17210 +                  %if &search_ds ne %then 1; %else 0;
+17211 +                  );
+17212 +      drop rc;
+17213 +      run;
+17215 +      /* Apply search if there is a search phrase specified */
+17216 +      %if &search_ds ne %then %do;
+17217 +         proc tmutil data=&export_out key=&termds;
+17218 +         control init memloc="scoretmutil";
+17219 +         run;
+17221 +         proc tmutil;
+17222 +         control memloc="scoretmutil";
+17223 +         search load indexname="stgindex";
+17224 +         run;
+17226 +         proc tmutil;
+17227 +         control memloc="scoretmutil";
+17228 +         search querydata=&search_ds;
+17229 +         output doc=work.doc_ids unweighted out=&export_out ;
+17230 +         run;
+17232 +         proc tmutil;
+17233 +         control memloc="scoretmutil" release;
+17234 +         run;
+17236 +         proc sql noprint;
+17237 +         create table &export as
+17238 +            select a.*, b.snippet as &varprefix._snippet, b.relevance as &varprefix._relevance
+17239 +            from &export a, work.doc_ids b
+17240 +            where b._document_ = a._document_
+17241 +            order by a._document_;
+17242 +         drop table work.doc_ids;
+17243 +            quit;
+17244 +         %end;
+17245 +         proc sql noprint;
+17246 +         create view &export_trans as
+17247 +            select ktrim(term) || '|' || role as _item_, b.*
+17248 +            from &em_user_term_strings as a, &export_out as b
+17249 +            where b._termnum_=a.key;
+17250 +               quit;
+17253 +      %end;
+17254 +%mend;
+17256 +%macro score();
+17257 +   %global tmutil_memloc;
+17258 +   %local _ISINDEXED _DSID _OUTNOBS;
+17259 +   %em_getname(key=filter_ids, type=data);
+17260 +   %em_getname(key=doc_ids, type=data);
+17261 +   %em_getname(key=terms_data, type=data);
+17262 +   %em_getname(key=tmconfig, type=data);
+17263 +   %em_getname(key=intersynds, type=data);
+17264 +   %em_getname(key=interdropds, type=data);
+17266 +   %em_getname(key=terms, type=data);
+17267 +   %em_getname(key=terms_tmf, type=data);
+17268 +   %em_getname(key=term_strings, type=data);
+17269 +   %em_getname(key=searchDS, type=data);
+17270 +   %em_getname(key=expand_searchDS, type=data);
+17271 +   %em_getname(key=tmout, type=data);
+17272 +   %em_getname(key=out_parent, type=data);
+17273 +   %em_getname(key=validout, type=data);
+17274 +   %em_getname(key=testout, type=data);
+17275 +      %em_getname(key=valid_trans, type=data);
+17276 +      %em_getname(key=test_trans, type=data);
+17278 +   %em_getname(key=scoreout, type=data);
+17279 +   %em_getname(key=PRESCORECODE, type=file, extension=sas);
+17280 +   %let systmutil=;
+17282 +    filename temp catalog 'sashelp.emtxtext.tm_parse_score.source';
+17283 +    %include temp;
+17284 +    filename temp catalog 'sashelp.emtxtext.tm_data2code.source';
+17285 +    %include temp;
+17286 +    filename temp catalog 'sashelp.emtxtext.tmf_filter_apply.source';
+17287 +    %include temp;
+17289 +    /* Get values for the macros needed by the node */
+17290 +   data work._tmconfig (drop=indexpath);
+17291 +      set &EM_USER_tmconfig;
+17292 +      call symput('_tm_parsevar', parseVar);
+17293 +      call symput('cellwgt', cellwgt);
+17294 +      call symput('termwgt', termwgt);
+17295 +      call symput('targetvar', targetvar);
+17296 +      call symput('lastfilternode', lastfilternode);
+17297 +      call symput('lastparsenode', lastparsenode);
+17298 +      call symput('lastprescore', last_prescore);
+17299 +      call symput("indexpath", indexpath);
+17300 +      call symput("multifile", multiterm);
+17301 +   run;
+17303 +%let EM_PUBLISHCODE = PUBLISH;
+17304 +%let EM_SCORECODEFORMAT = DATASTEP;
+17305 +   %let overwrite_pre = ;
+17307 +   %let lastprescore=%trim(%left(&lastprescore));
+17309 +   /* Need to start up proc tmutil if the train action didn't just run */
+17310 +   %if ^%symexist(tmutil_memloc) or &tmutil_memloc = %then %do;
+17311 +      proc tmutil data=&EM_LIB..&lastfilternode._tmout
+17312 +         key=&EM_USER_terms_tmf doc=&EM_IMPORT_DATA
+17313 +         %if &targetvar ne %then target=&targetvar;
+17314 +            ;
+17315 +      control init memloc='tmutil_memloc';
+17316 +      run;
+17317 +      %if "%ktrim(&systmutil)" ne "" %then %goto pre_end_filter_score;
+17318 +      %end;
+17320 +   /* Now we need to save the document, terms,
+17321 +      transaction (or out) data sets */
+17322 +   proc tmutil;
+17323 +      control memloc='tmutil_memloc';
+17324 +        select reducef=1;
+17325 +      output out=&EM_USER_out_parent key=&EM_USER_terms_data;
+17326 +   run;
+17327 +      %if "%ktrim(&systmutil)" ne "" %then %goto pre_end_filter_score;
+17331 +   %LET _OUTNOBS=0;
+17332 +   %LET _DSID=%SYSFUNC(OPEN(&EM_USER_out_parent,IN));
+17334 +   %LET _OUTNOBS=%SYSFUNC(ATTRN(&_DSID,NOBS));
+17335 +   %IF &_DSID > 0 %THEN %LET RC=%SYSFUNC(CLOSE(&_DSID));
+17337 +   %if &_OUTNOBS=0 %then %do;
+17338 +        %let EMEXCEPTIONSTRING = EMTOOL.FILTER_DATA_ZERO;
+17339 +        %let syscc=1000;
+17341 +        %goto pre_end_filter_score;
+17342 +    %end;
+17343 +   /* Now output unweighted children */
+17344 +   proc tmutil;
+17345 +      control memloc='tmutil_memloc';
+17346 +      output unweighted outchild=&EM_USER_tmout;
+17347 +      run;
+17348 +      %if "%ktrim(&systmutil)" ne "" %then %goto pre_end_filter_score;
+17351 +   /* Create indexed term table for writing out score code, and exported transaction table
+17352 +      as join of out_parent with term_strings */
+17353 +   proc sql noprint;
+17354 +   create table _filtterms as
+17355 +      select key, term, role, weight, keep, parent, _ispar
+17356 +      from &em_user_terms where key ne parent;
+17357 +    create view &EM_EXPORT_TRANSACTION as
+17358 +       select ktrim(term) || '|' || role as _item_, b.*
+17359 +       from &em_user_term_strings as a, &em_user_out_parent as b
+17360 +       where b._termnum_=a.key
+17361 +       order by b._termnum_, b._document_ ;
+17362 +         quit;
+17364 +   proc contents data=work._filtterms noprint out2=indexinfo;
+17365 +   run;
+17367 +   %LET _ISINDEXED=0;
+17368 +   %LET _DSID=%SYSFUNC(OPEN(indexinfo,IN));
+17369 +   %LET _ISINDEXED=%SYSFUNC(ATTRN(&_DSID,NOBS));
+17370 +   %IF &_DSID > 0 %THEN %LET RC=%SYSFUNC(CLOSE(&_DSID));
+17372 +   %let where_phrase=;
+17373 +      %if %nrbquote(&EM_PROPERTY_whereDoc) ne  %then %do;
+17374 +      %let where_phrase=%ktrim(%nrbquote(&EM_PROPERTY_whereDoc));
+17375 +      %end;
+17376 +   %let search_phrase_valid = 0;
+17377 +   data _null_;
+17378 +      set &EM_USER_searchDS;
+17379 +      if trim(left(query)) ne "" then call symput("search_phrase_valid", "1");
+17380 +   run;
+17381 +   /* Create exported documents table based on work.doc_ids */
+17382 +   proc sql noprint;
+17383 +      create view &EM_EXPORT_TRAIN as
+17384 +         select a.* %if &search_phrase_valid = 1 %then ,b.&EM_NODEID._snippet, b.&EM_NODEID._relevance;
+17385 +         from &EM_IMPORT_DATA as a, &EM_USER_doc_ids as b
+17386 +         where a._document_ = b._document_
+17387 +         order by a._document_;
+17388 +   quit;
+17393 +   /*
+17394 +   %tmf_score(import=&em_import_data,export=&em_export_train,
+17395 +              %if 0 %then import_out=&EM_LIB..&lastfilternode._tmout,;
+17396 +              export_out=&EM_USER_tmout,
+17397 +              where_phrase_param=%nrbquote(&where_phrase),
+17398 +              search_ds=&search_ds,
+17399 +              termds=_filtterms,
+17400 +              parsevar=&_tm_parsevar,
+17401 +              config_DS=&EM_USER_tmconfig);
+17402 +   */
+17403 +   %tmf_score(import=&em_import_validate,export=&em_export_validate,
+17404 +              %if 0 %then import_out=&EM_LIB..&lastfilternode._validout,;
+17405 +              export_out=&EM_USER_validout,export_trans=&EM_USER_valid_trans,
+17406 +              where_phrase_param=%nrbquote(&where_phrase),
+17407 +              %if &search_phrase_valid eq 1 %then search_ds=&em_user_expand_searchDS,;
+17408 +              termds=_filtterms,
+17409 +              parsevar=&_tm_parsevar,
+17410 +              config_DS=work._tmconfig,
+17411 +              varprefix=&EM_NODEID.,
+17412 +              multiterm==%bquote(&multifile));
+17413 +   %tmf_score(import=&em_import_test,export=&em_export_test,
+17414 +              %if 0 %then import_out=&EM_LIB..&lastfilternode._testout,;
+17415 +              export_out=&EM_USER_testout,export_trans=&EM_USER_test_trans,
+17416 +              where_phrase_param=%nrbquote(&where_phrase),
+17417 +              %if &search_phrase_valid eq 1 %then search_ds=&em_user_expand_searchDS,;
+17418 +              termds=_filtterms,
+17419 +              parsevar=&_tm_parsevar,
+17420 +              config_DS=work._tmconfig,
+17421 +              varprefix=&EM_NODEID.,
+17422 +              multiterm==%bquote(&multifile));
+17424 +      /* Set up appropriate metadata on output transaction table */
+17425 +      filename _meta "&EM_FILE_CDELTA_TRANSACTION";
+17426 +      data _null_;
+17427 +         file _meta;
+17428 +         put 'if upcase(NAME)="_DOCUMENT_" then do;';
+17429 +         put '   ROLE="ID";';
+17430 +         put '   LEVEL="NOMINAL";';
+17431 +         put 'end;';
+17432 +         put 'if upcase(NAME)="_ITEM_" then do;';
+17433 +         put '   ROLE="TARGET";';
+17434 +         put '   LEVEL="NOMINAL";';
+17435 +         put 'end;';
+17436 +         put 'if upcase(NAME) in ("_COUNT_","_TERMNUM_") then do;';
+17437 +         put '   ROLE="REJECTED";';
+17438 +         put 'end;';
+17439 +      run;
+17440 +      filename _meta;
+17443 +   * path of the diagram ;
+17444 +   %let emwspath = ;
+17445 +   data _null_;
+17446 +      call symput("emwspath", strip(pathname("&EM_LIB")));
+17447 +   run;
+17450 +   filename pre "&EM_USER_prescorecode";
+17451 +      data _null_;
+17452 +         file pre;
+17453 +      run;
+17455 +   /* We need to use last prescore */
+17456 +   %if &lastprescore ne %then %do;
+17457 +        %let tmprescoreFile = &emwspath&em_dsep&lastprescore&em_dsep.PRESCORECODE.sas;
+17459 +        filename tmpre "&tmprescoreFile";
+17460 +        %em_copyfile(infref=tmpre, outfref=pre, append=Y);
+17461 +        filename tmpre;
+17462 +      %end;
+17463 +      filename pre;
+17465 +   %if not %symexist(em_term_loc) %then %do;
+17466 +        /* If em_term_loc is not specified, we use existing datasets in the EMWS project folder for scoring*/
+17467 +       %let emtermloc_exists = 0;
+17468 +       %let em_term_loc = %bquote(%sysfunc(pathname(&EM_LIB)));
+17469 +       libname termloc "&em_term_loc";
+17471 +       data termloc.&EM_NODEID._filtterms;
+17472 +          set work._filtterms;
+17473 +       run;
+17475 +       %let scored_terms = termloc.&EM_NODEID._filtterms;
+17476 +       %let scored_config = termloc.&EM_NODEID._tmconfig;
+17477 +       %let scored_multids = termloc.&lastparsenode._multiall;
+17478 +       %let scored_searchds= termloc.&EM_NODEID._expand_searchDS;
+17480 +   %end;
+17481 +   %else %do;
+17482 +     /* If em_term_loc is not specified, we write existing datasets in the EMWS project folder to an external directory specified by em_term_loc location for scoring*/
+17483 +       %let emtermloc_exists = 1;
+17484 +       libname termloc "&em_term_loc";
+17485 +        %if %sysfunc(libref(termloc)) ne 0 %then %do;
+17486 +        %let  EMEXCEPTIONSTRING = EMTOOL.EMTERMLOC,&em_term_loc;
+17487 +        %goto pre_end_filter_score;
+17488 +        %end;
+17490 +        data termloc.&EM_LIB._&EM_NODEID._filtterms;
+17491 +           set _filtterms;
+17492 +        run;
+17494 +        data termloc.&EM_LIB._&EM_NODEID._tmconfig;
+17495 +           set work._tmconfig;
+17496 +        run;
+17498 +        %if %sysfunc(exist(&EM_LIB..&lastparsenode._multiall))  %then %do;
+17499 +           data termloc.&EM_LIB._&lastparsenode._multiall;
+17500 +              set &EM_LIB..&lastparsenode._multiall;
+17501 +           run;
+17502 +        %end;
+17504 +         %if &search_phrase_valid eq 1 %then %do;
+17505 +        data termloc.&EM_LIB._&EM_NODEID._ex_searchDS;
+17506 +          set &em_user_expand_searchDS;
+17507 +        run;
+17508 +       %end;
+17510 +        %let scored_terms = termloc.&EM_LIB._&EM_NODEID._filtterms;
+17511 +        %let scored_config = termloc.&EM_LIB._&EM_NODEID._tmconfig;
+17512 +        %let scored_multids = termloc.&EM_LIB._&lastparsenode._multiall;
+17513 +        %let scored_searchds= termloc.&EM_LIB._&EM_NODEID._ex_searchDS;
+17514 +   %end;
+17517 +      /* Output prescore and score code to parse the data */
+17518 +      %tm_parse_score(nodeid=&EM_NODEID,termds=&scored_terms,
+17519 +                        configds=&scored_config,
+17520 +                        multids=&scored_multids,
+17521 +                        outds=&EM_NODEID._out,
+17522 +                        where_phrase=%nrbquote(&where_phrase),
+17523 +                        prefile=&em_user_PRESCORECODE,
+17524 +                        scorefile=&EM_FILE_EMPUBLISHSCORECODE,
+17525 +                        need_search=&search_phrase_valid);
+17528 +   * Now save code, if necessary, for search phrase;
+17529 +  %if &search_phrase_valid eq 1 %then %do;
+17531 +   filename _tmscore "&EM_FILE_EMPUBLISHSCORECODE";
+17532 +   data _NULL_;
+17533 +     file _tmscore mod;
+17534 +     put "proc tmutil data=&EM_NODEID._out key=&scored_terms;";
+17535 +     put 'control init memloc="scoretmutil";run;';
+17537 +     put "proc tmutil;";
+17538 +     put 'control memloc="scoretmutil";';
+17539 +     put 'search load indexname="stgindex";run;';
+17541 +     put 'proc tmutil;';
+17542 +     put 'control memloc="scoretmutil";';
+17543 +     put "search querydata=&scored_searchds;";
+17544 +     put "output doc=work.doc_ids unweighted out=&EM_NODEID._out;run;";
+17546 +     put "proc tmutil;";
+17547 +     put 'control memloc="scoretmutil" release;';
+17550 +     put "proc sql noprint;";
+17551 +     put 'create table &em_score_output as';
+17552 +     put "select a.*,b._document_, b.snippet as &EM_NODEID._snippet, b. relevance as &EM_NODEID._relevance" ;
+17553 +     put 'from &em_score_output a, work.doc_ids b';
+17554 +     put "where b._document_ = a._document_";
+17555 +     put "order by a._document_;";
+17556 +     put "drop table work.doc_ids;";
+17557 +     put "quit;";
+17558 +     put 'data &em_score_output; set &em_score_output;';
+17559 +     run; ;
+17561 +          filename _tmscore;
+17562 +    %end;
+17564 +   filename _tmscore;
+17565 +   %let EM_PUBLISH_CODE=PUBLISH;
+17566 +   %let EM_SCORECODEFORMAT = DATASTEP;
+17568 +   %pre_end_filter_score:
+17569 +   proc tmutil;
+17570 +      control memloc='tmutil_memloc' release;
+17571 +   run;
+17572 +      %if "%ktrim(&systmutil)" ne "" %then %do;
+17573 +         %let EMEXCEPTIONSTRING = EMTOOL.TMUTIL_ERR,&systmutil;
+17574 +         %end;
+17575 +   %if ^%symexist(tm_debug) %then %let tm_debug=0;
+17576 +   %if &tm_debug =0 %then %do;
+17577 +      proc sql noprint;
+17578 +         drop table _filtterms;
+17579 +         drop table _tmconfig;
+17580 +         drop table indexinfo;
+17581 +      quit;
+17582 +   %end;
+17585 +%mend score;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMTXTEXT.TM_PARSE_SCORE.SOURCE.
+17586 +/* ****************************************************************
+17587 + * Copyright (C) 2009 by SAS Institute Inc., Cary, NC 27513
+17588 + *
+17589 + * Name:             tm_parse_score.sas
+17590 + * Product:          SAS Text Miner
+17591 + * Language:         Sas
+17592 + * Script:
+17593 + *
+17594 + * Usage:
+17595 + *
+17596 + * Purpose:  Used to score new documents.
+17597 + *
+17598 + * History:
+17599 + * 11Jun09 Initial Coding
+17600 + *
+17601 + * Notes:
+17602 + *
+17603 + * Last Modified By:
+17604 + * Last Modified On: Tue May 12 15:06:35 2015
+17605 + *
+17606 + * End
+17607 + * ************************************************************** */
+17608 +* options mstored sasmstore=sashelp;
+17609 +
+17610 +%macro tm_parse_score(nodeid=,termds=,multids=,configds=,outds=,prefile=,scorefile=,
+17611 +                      where_phrase=,need_search=0);
+17612 +proc sql noprint;
+17613 +   select parsevar into :_tm_parseVar from &configds;
+17614 +   quit;
+17615 +
+17616 +
+17617 +%let _hasmultitermdata=0;
+17618 +data _config;
+17619 +   set &configds;
+17620 +run;
+17621 +%if %sysfunc(exist(&multids))  %then %do;
+17622 +    proc sql noprint;
+17623 +       select count(*) into: _numMultis
+17624 +       from &multids;
+17625 +    quit;
+17626 +   %if &_numMultis >0 %then %do;
+17627 +      %let _hasmultitermdata =1;
+17628 +   %end;
+17629 +   %else %do;
+17630 +      data _config;
+17631 +         length multiterm $ 1;
+17632 +         set _config;
+17633 +         multiterm="";
+17634 +      run;
+17635 +      /* update &configds, which may change configds*/
+17636 +      data  &configds;
+17637 +        set _config;
+17638 +      run;
+17639 +   %end;
+17640 +
+17641 +%end;
+17642 +
+17643 +
+17644 +   %if %eval(&syscc)>4 %then %do;
+17645 +      %let  EMEXCEPTIONSTRING = exception.server.EMTOOL.GENERICRUNTIMEEXCEPTION;
+17646 +      %return;
+17647 +   %end;
+17648 +
+17649 +filename _tmcode "&prefile";
+17650 +
+17651 +data _null_;
+17652 +   length string $256 string2 $256 string3 $256;
+17653 +   file _tmcode mod;
+17654 +   put;
+17655 +     %if &lastprescore eq %then %do;
+17656 +      put 'libname termloc "' "&em_term_loc" '";';
+17657 +      put;
+17658 +     %end;
+17659 +
+17660 +   %if &_hasmultitermdata > 0 %then %do;
+17661 +
+17662 +      string='%let _multifile=' || '%SYSFUNC(PATHNAME(work))'||'/'||"&NODEID._multi.txt;";
+17663 +      put string;
+17664 +      string='%let _multiSLength='||' %klength(&_multifile);';
+17665 +      put string;
+17666 +      put;
+17667 +
+17668 +      put "data &configds;";
+17669 +      put 'length multiterm $ &_multiSLength;';
+17670 +      put "set &configds;";
+17671 +      string ='multiterm='|| 'ktrim(symget('||"'"||'_multifile'||"'));";
+17672 +      put string;
+17673 +      put 'run;';
+17674 +      put;
+17675 +
+17676 +      put 'proc sql noprint;';
+17677 +      put     'select multiencoding into: _tmmultiencoding';
+17678 +      put     "from &configds;";
+17679 +      put 'quit;';
+17680 +
+17681 +      put;
+17682 +
+17683 +      string= 'filename _multout '||'"'|| '&_multifile'||'";';
+17684 +      put string;
+17685 +      put 'data _NULL_;';
+17686 +      string= "set &multids;";
+17687 +      put string;
+17688 +      string= 'file _multout encoding= '||'"'|| '%trim(&_tmmultiencoding)'||'";';
+17689 +      put string;
+17690 +      string = 'put term '||"'"|| ":3:"||"'"||' role;';
+17691 +      put string;
+17692 +      put 'run;';
+17693 +
+17694 +   %end;
+17695 +
+17696 + run;
+17697 +
+17698 +
+17699 + filename _tmcode "&scorefile";
+17700 +    data _NULL_;
+17701 +        file _tmcode;
+17702 +        length string $200;
+17703 +
+17704 +          /*Fix for S1155404: data step between tgscore functions*/
+17705 +        %if %symexist(last_prescore_node) %then %do;
+17706 +          %if (&last_filter_node eq &last_prescore_node and &last_filter_node ne &last_parse_node) %then %do;
+17707 +             put;
+17708 +             put 'data &em_score_output; set &em_score_output;';
+17709 +             put;
+17710 +          %end;
+17711 +        %end;
+17712 +
+17713 +        %if &where_phrase ne %then %do; put "where &where_phrase;"; %end;
+17714 +        put '_document_ = _n_;';
+17715 +        string='rc=tgscore(' || "%trim(&_tm_parseVar)" || ',"' || "&configds" ||
+17716 +           '", "' || "&termds" || '", "' || "&outds" || '", "' || '&_multifile' || '", ' ||
+17717 +
+17718 +           "&need_search);";
+17719 +        put string;
+17720 +        put 'drop rc;';
+17721 +    run;
+17722 +filename _tmcode;
+17723 +
+17724 +
+17725 +%mend;
+17726 +
+17727 +/*
+17728 + filename temp catalog 'sashelp.emutil.em_copyfile.source';
+17729 + %include temp;
+17730 + %tm_parse_score(nodeid=node1,termds=unittest.textparsing_terms,
+17731 +configds=unittest.textparsing_tmconfig,
+17732 + outds=work._tmout, prefile=c:\pre.sas,scorefile=c:\score.sas,
+17733 + need_search=1);
+17734 +%include "c:\pre.sas";
+17735 + data work._scored;
+17736 +%include "c:\score.sas";
+17737 + run;
+17738 +
+17739 + */
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMTXTEXT.TM_DATA2CODE.SOURCE.
+17740 +/* ****************************************************************
+17741 + * Copyright (C) 2009 by SAS Institute Inc., Cary, NC 27513
+17742 + *
+17743 + * Name:             tm_data2code.sas
+17744 + * Product:          SAS Text Miner
+17745 + * Language:         Sas
+17746 + * Script:
+17747 + *
+17748 + * Usage:  %tm_data2code(data=, outdata=WORK.DATA);
+17749 + *
+17750 + * Purpose:          To do a data2code (like %em_data2code()) but allow the input data
+17751 + *  to be view or data.
+17752 + *
+17753 + *    PARAMETERS:
+17754 + *        DATA        = data set
+17755 + *        OUTDATA     = out data set
+17756 + *        OUTFILE     = file where to saved the code
+17757 + *        APPEND      = append (Y/N)
+17758 + * History:
+17759 + * 11Jun09 Initial Coding
+17760 + *
+17761 + * Notes:
+17762 + *
+17763 + * Last Modified By:
+17764 + * Last Modified On: Thu Jul 23 11:00:06 2009
+17765 + *
+17766 + * End
+17767 + * ************************************************************** */
+17768 +%macro tm_data2code(data=, outdata=WORK.DATA, outfile=, append=N);
+17769 +%if &data eq %then %do;
+17770 +   %put ERROR: Data set not defined;
+17771 +   %end;
+17772 +%else %do;
+17773 +   %if (^%sysfunc(exist(&data)) and ^%sysfunc(exist(&data, view))) %then %do;
+17774 +       %put ERROR: Data set does not exist;
+17775 +       %end;
+17776 +   %else %do;
+17777 +      %global em_data em_outdata em_codefile em_append;
+17778 +      %let em_data=&data;
+17779 +      %let em_outdata=&outdata;
+17780 +      %let em_codefile=&outfile;
+17781 +      %let em_append=&append;
+17782 +      proc display c=sashelp.emutil.data2code.scl; run;
+17783 +      %end;
+17784 +   %end;
+17785 +%mend;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMTXTEXT.TMF_FILTER_APPLY.SOURCE.
+17786 +/* ****************************************************************
+17787 + * Copyright (C) 2009 by SAS Institute Inc., Cary, NC 27513
+17788 + *
+17789 + * Name:             tmf_filter_apply.sas
+17790 + * Product:          SAS Text Miner
+17791 + * Language:         Sas
+17792 + * Script:
+17793 + *
+17794 + * Usage:
+17795 + *
+17796 + * Purpose: This applies the where clause and/or search expression, re-applies
+17797 + *    weightings to result, and then determines default keep/drop status
+17798 + *    based on two different criteria.  Finally it applies user-determined
+17799 + *    keep/drop changes, and outputs all results to specified data sets.
+17800 + *
+17801 + * History:
+17802 + * 18Aug09 Initial Coding
+17803 + *
+17804 + * Notes:
+17805 + *
+17806 + * Last Modified By:
+17807 + * Last Modified On: Wed Nov 11 10:40:03 2009
+17808 + *
+17809 + * End
+17810 + * ************************************************************** */
+17811 +%macro tmf_filter_apply(termDS=,searchDS=,interdropDS=,indexpath=,
+17812 +                        memloc=,mindocs=,cellweight=,termweight=,
+17813 +                        maxterms=,expand_query_DS=work._expandquery,
+17814 +                        filter_ids=, doc_ids=work._doc_ids,expandquery=1,prefix=);
+17816 +   %global systmutil;
+17817 +   %global _allminuses;
+17818 +   %let EMEXCEPTIONSTRING=;
+17819 +   %let systmutil=;
+17820 +   %let syscc=0;
+17822 +   * *** search phrase *** ;
+17823 +   %if &searchDS ne %then %do;
+17825 +      * apply a search phrase if one is active;
+17826 +   %let search_phrase_valid = 0;
+17827 +   data _null_;
+17828 +      set &searchDS;
+17829 +      if trim(left(query)) ne "" then call symput("search_phrase_valid", "1");
+17830 +   run;
+17832 +      %if &search_phrase_valid eq 1 %then %do;
+17833 +      filename temp catalog 'sashelp.emtxtext.tmescapeterm.source'; %include temp;
+17834 +      filename temp catalog 'sashelp.emtxtext.tmqueryexpand.source'; %include temp;
+17837 +      /* before we do a query expand, update terms table with new children on it so ># matches*/
+17838 +      proc tmutil;
+17839 +         control memloc='tmutil_memloc' ;
+17840 +         output key=tempsearchterms;
+17841 +      run;
+17843 +      proc sql noprint;
+17844 +      create view tempsearchterms2 as
+17845 +         select b.key ,
+17846 +           a.term ,
+17847 +           a.role ,
+17848 +           a.rolestring,
+17849 +           a.attribute,
+17850 +           a.attrstring,
+17851 +           b.weight ,
+17852 +           b.freq,
+17853 +           b.numdocs,
+17854 +           b.keep ,
+17855 +           b._ispar ,
+17856 +           b.parent ,
+17857 +           b.parent_id
+17859 +         from tempsearchterms as b, &em_user_term_strings as a
+17860 +         where  a.key = b.key;
+17861 +      quit;
+17862 +         %if &expandquery ne 0 %then %do;
+17863 +           %let _allminuses =0;
+17865 +           %tmQueryExpand(inds=&searchds, invar=query,
+17866 +                     outvar=query, outds=&expand_query_DS,
+17867 +                     termds=tempsearchterms2);
+17868 +            %if &syscc > 4 %then %do;
+17869 +               %let EMEXCEPTIONSTRING=EMTOOL.QUERYEXPAND;
+17870 +               %let syscc=0;
+17871 +            %end;
+17872 +            %if &EMEXCEPTIONSTRING ne %then %goto end_macro;
+17873 +         %end;
+17874 +         %else %do;
+17875 +             %let _allminuses=0;
+17877 +             /* need to see if this is a term list or query and set macrovar*/
+17878 +             %let dsid=%sysfunc(open(&expand_query_ds,i));
+17879 +             %if %sysfunc(varnum(&dsid,allminuses)) > 0 %then %do;
+17880 +                  %let _allminuses=1;
+17881 +             %end;
+17882 +             %let closid=%sysfunc(close(&dsid));
+17883 +         %end;
+17885 +          %if &_allminuses = 0 %then %do;
+17886 +              * load the index ;
+17887 +              proc tmutil;
+17888 +                 control memloc="&memloc";
+17889 +                 search load indexpath="&indexpath" querydata=&expand_query_DS;
+17890 +                 output doc=&doc_ids;
+17891 +              run;
+17892 +              data &doc_ids;
+17893 +                 set &doc_ids;
+17894 +                 rename snippet=&prefix._snippet;
+17895 +                 rename relevance=&prefix._relevance;
+17896 +              run;
+17899 +            %if &syscc > 4 %then %do;
+17900 +                %let EMEXCEPTIONSTRING = EMTOOL.TMUTIL,&systmutil;
+17901 +                %put emexceptionstring= "&EMEXCEPTIONSTRING";
+17902 +                %let syscc=0;
+17903 +            %end;
+17904 +          %end;
+17905 +          %else %do;
+17906 +               proc tmutil;
+17907 +                 control memloc="&memloc";
+17908 +                 search load indexpath="&indexpath" querydata=&expand_query_DS comp;
+17909 +                 output doc=&doc_ids;
+17910 +              run;
+17912 +              data &doc_ids;
+17913 +                 length snippet $100;
+17914 +                 set &doc_ids;
+17915 +                 relevance=1;
+17916 +                 snippet="";
+17917 +                 rename snippet=&prefix._snippet;
+17918 +                 rename relevance=&prefix._relevance;
+17919 +              run;
+17920 +          %end;
+17921 +          %if &syscc > 4 %then %do;
+17922 +                %let EMEXCEPTIONSTRING = EMTOOL.TMUTIL,&systmutil;
+17923 +                %put emexceptionstring= "&EMEXCEPTIONSTRING";
+17924 +                %let syscc=0;
+17925 +            %end;
+17926 +          %if "%ktrim(&systmutil)" ne "" %then %goto end_macro;
+17928 +      %end;
+17929 +      /* If no search phrase provided, then copy filter_ids into doc_ids */
+17930 +      %else %do;
+17931 +         data &doc_ids; set &filter_ids; run;
+17932 +       %end;
+17933 +   %end;
+17935 +   * *** weightings *** ;
+17936 +   %if &cellweight ne or &termweight ne %then %do;
+17937 +   proc tmutil;
+17938 +   control memloc="&memloc";
+17939 +         weight
+17940 +            %if &cellweight ne %then cellwgt=&cellWeight;
+17941 +            %if &termweight ne %then termwgt=&termWeight;
+17942 +         ;
+17943 +         run;
+17944 +      %if "%ktrim(&systmutil)" ne "" %then %goto end_macro;
+17945 +      %end;
+17947 +   * min docs ;
+17948 +   * remove all terms that do not have at least minDocs ;
+17949 +   %if &mindocs > 1 %then %do;
+17950 +      proc tmutil;
+17951 +      control memloc="&memloc";
+17952 +      select reduceF = &minDocs;
+17953 +      run;
+17954 +      %if "%ktrim(&systmutil)" ne "" %then %goto end_macro;
+17955 +      %end;
+17957 +   * max terms ;
+17958 +   %if &maxTerms ne and &maxTerms ne . %then %do;
+17959 +      proc tmutil;
+17960 +      control memloc="&memloc";
+17961 +      select reducensqr = &maxTerms;
+17962 +      run;
+17963 +   %if "%ktrim(&systmutil)" ne "" %then %goto end_macro;
+17964 +      %end;
+17966 +     %if &syscc > 4 %then %do;
+17967 +                %let EMEXCEPTIONSTRING = EMTOOL.TMUTIL,&systmutil;
+17968 +                %put emexceptionstring= "&EMEXCEPTIONSTRING";
+17969 +                %let syscc=0;
+17970 +            %end;
+17973 +   * now apply user-specified keep/drop terms *** ;
+17974 +   * data set to track when terms are kept or dropped ;
+17975 +   %if &interdropds ne %then %do;
+17976 +      data _null_;
+17977 +      set &interdropds;
+17978 +      * this is defined at the bottom of this file ;
+17979 +      term_id = trim(left(term_id));
+17980 +      keep_id = trim(left(keep));
+17981 +      call execute('%change_keep_drop('||term_id||', '||keep_id||')');
+17982 +      run;
+17983 +      %end;
+17985 +   %end_macro:
+17986 +%mend tmf_filter_apply;
+17989 +%macro change_keep_drop(term_id, keep_id);
+17990 +   %global tmutil_memloc ;
+17991 +   proc tmutil;
+17992 +      control memloc='tmutil_memloc';
+17993 +      %if %upcase(&keep_id) eq Y %then %do;
+17994 +         select keeplist=&term_id;
+17995 +      %end;
+17996 +      %else %do;
+17997 +         select droplist=&term_id;
+17998 +      %end;
+17999 +   run;
+18000 +%mend change_keep_drop;
+NOTE: %INCLUDE (level 1) ending.
+
+NOTE: There were 1 observations read from the data set EMWS1.TEXTFILTER_TMCONFIG.
+NOTE: The data set WORK._TMCONFIG has 1 observations and 28 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The data set EMWS1.TEXTFILTER_OUT_PARENT has 41987 observations and 3 variables.
+NOTE: The data set EMWS1.TEXTFILTER_TERMS_DATA has 22457 observations and 8 variables.
+NOTE: PROCEDURE TMUTIL used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: The data set EMWS1.TEXTFILTER_TMOUT has 42119 observations and 3 variables.
+NOTE: PROCEDURE TMUTIL used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Table WORK._FILTTERMS created, with 2870 rows and 7 columns.
+
+NOTE: SQL view EMWS1.TEXTFILTER_TRANSACTION has been defined.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+      
+
+
+NOTE: The data set WORK.INDEXINFO has 0 observations and 0 variables.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set EMWS1.TEXTFILTER_SEARCHDS.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: SQL view EMWS1.TEXTFILTER_TRAIN has been defined.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The file _META is:
+      Filename=C:\Users\Ryan Carr\OneDrive\Documents\MSA\fall_2_orange_hw\text_analytics\text_analytics_for_tweets\Workspaces\EMWS1\TextFilter\CDELTA_TRANSACTION.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=16Oct2018:22:33:07,
+      Create Time=16Oct2018:20:10:50
+
+NOTE: 11 records were written to the file _META.
+      The minimum record length was 4.
+      The maximum record length was 51.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Fileref _META has been deassigned.
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The file PRE is:
+      Filename=C:\Users\Ryan Carr\OneDrive\Documents\MSA\fall_2_orange_hw\text_analytics\text_analytics_for_tweets\Workspaces\EMWS1\TextFilter\PRESCORECODE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=16Oct2018:22:33:07,
+      Create Time=16Oct2018:22:33:07
+
+NOTE: 0 records were written to the file PRE.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Fileref PRE has been deassigned.
+NOTE: Libref TERMLOC refers to the same physical library as EMWS1.
+NOTE: Libref TERMLOC was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\Users\Ryan Carr\OneDrive\Documents\MSA\fall_2_orange_hw\text_analytics\text_analytics_for_tweets\Workspaces\EMWS1
+
+NOTE: There were 2870 observations read from the data set WORK._FILTTERMS.
+NOTE: The data set TERMLOC.TEXTFILTER_FILTTERMS has 2870 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set TERMLOC.TEXTFILTER_TMCONFIG.
+NOTE: The data set WORK._CONFIG has 1 observations and 29 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Variable string2 is uninitialized.
+NOTE: Variable string3 is uninitialized.
+NOTE: The file _TMCODE is:
+      Filename=C:\Users\Ryan Carr\OneDrive\Documents\MSA\fall_2_orange_hw\text_analytics\text_analytics_for_tweets\Workspaces\EMWS1\TextFilter\PRESCORECODE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=16Oct2018:22:33:07,
+      Create Time=16Oct2018:22:33:07
+
+NOTE: 23 records were written to the file _TMCODE.
+      The minimum record length was 0.
+      The maximum record length was 135.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The file _TMCODE is:
+      Filename=C:\Users\Ryan Carr\OneDrive\Documents\MSA\fall_2_orange_hw\text_analytics\text_analytics_for_tweets\Workspaces\EMWS1\TextFilter\EMPUBLISHSCORE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=16Oct2018:22:33:07,
+      Create Time=16Oct2018:22:33:07
+
+NOTE: 3 records were written to the file _TMCODE.
+      The minimum record length was 8.
+      The maximum record length was 113.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Fileref _TMCODE has been deassigned.
+WARNING: No logical assign for filename _TMSCORE.
+
+NOTE: PROCEDURE TMUTIL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+18001  *------------------------------------------------------------*;
+18002  * End SCORE: TextFilter;
+18003  *------------------------------------------------------------*;
+
+18005  *------------------------------------------------------------*;
+18006  * TextFilter: Computing metadata for TRAIN data;
+18007  *------------------------------------------------------------*;
+
+18349  proc sort data = EMWS1.TextParsing_EMINFO OUT=WORK.SORTEDEMINFO NOTHREADS;
+18350  by TARGET KEY;
+18351  run;
+
+NOTE: There were 4 observations read from the data set EMWS1.TEXTPARSING_EMINFO.
+NOTE: The data set WORK.SORTEDEMINFO has 4 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+18352  proc sort data = EMWS1.TextFilter_EMINFO OUT=WORK.TEMP_INFO NOTHREADS;
+18353  by TARGET KEY;
+18354  run;
+
+NOTE: There were 4 observations read from the data set EMWS1.TEXTFILTER_EMINFO.
+NOTE: The data set WORK.TEMP_INFO has 4 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+18355  data EMWS1.TextFilter_EMINFO;
+18356  merge WORK.SORTEDEMINFO WORK.TEMP_INFO;
+18357  by TARGET KEY;
+18358  run;
+
+NOTE: There were 4 observations read from the data set WORK.SORTEDEMINFO.
+NOTE: There were 4 observations read from the data set WORK.TEMP_INFO.
+NOTE: The data set EMWS1.TEXTFILTER_EMINFO has 6 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+18359  proc datasets lib=work nolist;
+18360  delete TEMP_INFO SORTEDEMINFO;
+18361  run;
+
+NOTE: Deleting WORK.TEMP_INFO (memtype=DATA).
+NOTE: Deleting WORK.SORTEDEMINFO (memtype=DATA).
+18362  quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+18363  *------------------------------------------------------------*;
+18364  * TextFilter: Computing metadata for TRANSACTION data;
+18365  *------------------------------------------------------------*;
+

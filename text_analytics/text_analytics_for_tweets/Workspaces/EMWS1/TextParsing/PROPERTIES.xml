@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  Location="CATALOG" Catalog="SASHELP.EMTXTEXT.PARSE.SOURCE" language="ENGLISH" delimit="Std"
+ bCapitalize="Y" bPartOfSpeech="N" NounGroups="Y" multiDS="SASHELP.ENG_MULTI" bPatterns="NONE"
+ stopList="SASHELP.ENGSTOP" ignorePOS="'AUX' 'CONJ' 'DET' 'INTERJ' 'PART' 'PREP' 'PRON'"
+ ignoreAttrib="'NUM' 'PUNCT'" bStems="Y" synonymDS="SASHELP.ENGSYNMS" maxviewTerms="20000"
+ ForceRun="N" RunAction="Train" Component="TextParsing" TGConcepts="" TGCategories=""
+ ignoreEntities="" startList="" filterLang="" RawCreateTime="1855339374.5" CreateTime="16OCT2018:20:02:54"
+ bPatternsSetting="NONE" parseVar="_0" NGSettingBeforeCustom="" RunId="c56cb099-0767-42ff-8e39-72439d22d760"
+>
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES ><![CDATA[
+USERTRAINCODE
+USERSCORECODE
+USERREPORTCODE
+STOPLIST
+STARTLIST
+MULTIDS
+SYNONYMDS
+]]>
+</FILEPROPERTIES></_ROOT_>

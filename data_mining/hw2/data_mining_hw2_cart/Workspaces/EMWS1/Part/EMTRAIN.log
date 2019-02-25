@@ -1,0 +1,114 @@
+*------------------------------------------------------------*
+* Training Log
+Date:                October 15, 2018
+Time:                21:17:59
+*------------------------------------------------------------*
+11423  proc freq data=EMWS1.Part_VariableSet noprint;
+11424  table ROLE*LEVEL/out=WORK.PartMETA;
+11425  run;
+
+NOTE: There were 3 observations read from the data set EMWS1.PART_VARIABLESET.
+NOTE: The data set WORK.PARTMETA has 2 observations and 4 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+11426  proc print data=WORK.PartMETA label noobs;
+11427  var ROLE LEVEL COUNT;
+11428  label ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel, NOQUOTE))" LEVEL = "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel, NOQUOTE))" COUNT = "%sysfunc(sasmsg(sashelp.dmine, rpt_count_vlabel, NOQUOTE))";
+11429  title9 ' ';
+11430  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_varSummary_title  , NOQUOTE))";
+11431  run;
+
+NOTE: There were 2 observations read from the data set WORK.PARTMETA.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.37 seconds
+      cpu time            0.01 seconds
+      
+
+11432  title10;
+
+trainPct=70 validatePct=30 testPct=0 
+11440  *------------------------------------------------------------*;
+11441  * Part: Create random partition;
+11442  *------------------------------------------------------------*;
+11443  data
+11444  EMWS1.Part_TRAIN(label="")
+11445  EMWS1.Part_VALIDATE(label="")
+11446  ;
+11447  retain _seed_ 12345;
+11448  drop _seed_ _genvalue_;
+11449  call ranuni(_seed_, _genvalue_);
+11450  label _dataobs_ = "%sysfunc(sasmsg(sashelp.dmine, sample_dataobs_vlabel, NOQUOTE))";
+11451  _dataobs_ = _N_;
+11452  drop _c00:;
+11453  set EMWS1.Ids_DATA;
+11454  if (7791 +1-_n_)*_genvalue_ <= (5454 - _C000001) then do;
+11455  _C000001 + 1;
+11456  output EMWS1.Part_TRAIN;
+11457  end;
+11458  else do;
+11459  _C000002 + 1;
+11460  output EMWS1.Part_VALIDATE;
+11461  end;
+11462  run;
+
+NOTE: View EMWS1.IDS_DATA.VIEW used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.03 seconds
+      
+NOTE: There were 7791 observations read from the data set TWEETS.TWEETS1.
+NOTE: There were 7791 observations read from the data set EMWS1.IDS_DATA.
+NOTE: The data set EMWS1.PART_TRAIN has 5454 observations and 4 variables.
+NOTE: The data set EMWS1.PART_VALIDATE has 2337 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.06 seconds
+      
+
+11463  run;
+
+11464  data _tempNobs;
+11465  length Type $8 Table $32 Nobs 8;
+11466  label type= "%sysfunc(sasmsg(sashelp.dmine, meta_type_vlabel,    NOQUOTE))" table = "%sysfunc(sasmsg(sashelp.dmine, meta_dataset_vlabel, NOQUOTE))" nobs = "%sysfunc(sasmsg(sashelp.dmine,  rpt_numObs_vlabel,   NOQUOTE))";
+11467  type='DATA';
+11468  table="EMWS1.Ids_DATA";
+11469  Nobs=7791;
+11470  output;
+11471  type='TRAIN';
+11472  table="EMWS1.Part_TRAIN";
+11473  Nobs=5454;
+11474  output;
+11475  type='VALIDATE';
+11476  table="EMWS1.Part_VALIDATE";
+11477  Nobs=2337;
+11478  output;
+11479  run;
+
+NOTE: The data set WORK._TEMPNOBS has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+11480  %let _cn = %sysfunc(getoption(CENTER));
+11481  %let _nb = %sysfunc(getoption(NUMBER));
+11482  options nonumber nocenter;
+11483  proc print data=_tempNobs noobs label;
+11484  title9 ' ';
+11485  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_partitionSummary_title, NOQUOTE))";
+11486  run;
+
+NOTE: There were 3 observations read from the data set WORK._TEMPNOBS.
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+11487  title10;
+11488  options &_cn &_nb;
+11489  run;
+

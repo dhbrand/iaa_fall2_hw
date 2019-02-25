@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="tweets" Scope="LOCAL" Role="RAW" Library="TWEETS" Table="TWEETS1" NCols="3"
+ NObs="7791" NBytes="1377280" Segment="" DataSourceRole="RAW" OutputType="VIEW" ForceRun="N"
+ ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="tweets"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="Ryan Carr" DsCreateDate="1855257154"
+ DsModifiedBy="Ryan Carr" DsModifyDate="1855257154" DsScope="LOCAL" Sample="D" SampleSizeType="PERCENT"
+ SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y" RunAction="Train"
+ Component="DataSource" RawCreateTime="1855257157.5" CreateTime="15OCT2018:21:12:38"
+ Description="" Data="TWEETS.TWEETS1" CMeta="WORK.M3I0_OD5" RunId="2fa5afe0-c82a-44e6-859f-d219080fea22"
+ RawLastTimeRun="1855257472.1" RawRunTime="4.3840000629" LastTimeRun="15OCT2018:21:17:52"
+ RunTime="0 Hr. 0 Min. 4.38 Sec.">
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

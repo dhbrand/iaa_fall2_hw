@@ -1,0 +1,206 @@
+*------------------------------------------------------------*
+User:                IAA-Student
+Date:                October 26, 2018
+Time:                11:22:19
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      INTERVAL           6
+INPUT      NOMINAL           10
+TARGET     NOMINAL            1
+ 
+ 
+ 
+ 
+Model Events
+ 
+                                  Number
+                   Measurement      of
+Target    Event       Level       Levels      Order       Label
+ 
+  y        YES       NOMINAL         2      Descending      y
+ 
+ 
+ 
+ 
+Predicted and decision variables
+ 
+Type         Variable    Label
+ 
+TARGET        y          y
+PREDICTED     P_yyes     Predicted: y=yes
+RESIDUAL      R_yyes     Residual: y=yes
+PREDICTED     P_yno      Predicted: y=no
+RESIDUAL      R_yno      Residual: y=no
+FROM          F_y        From: y
+INTO          I_y        Into: y
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+Variable Importance
+ 
+                                    Number of
+                                    Splitting
+Variable Name             Label       Rules           Importance
+ 
+ConsumerGroup                           2                 1.0000
+balance                  balance        8                 0.4240
+last_campaign_outcome                   4                 0.2355
+val_email                               3                 0.1894
+month                    month          4                 0.1465
+ 
+ 
+ 
+Tree Leaf Report
+ 
+                                 Training
+Node               Training       Percent
+ Id     Depth    Observations       YES
+ 
+ 111      6          20330         0.04
+  76      6           7180         0.44
+  58      5           4138         0.10
+  94      6           3043         0.16
+  10      3           1880         0.76
+  72      6           1540         0.60
+  61      5           1080         0.23
+  11      3            931         0.95
+  50      5            712         0.32
+   8      3            659         0.88
+  73      6            567         0.74
+ 110      6            563         0.16
+  38      5            547         0.70
+  26      4            517         0.46
+  28      4            447         0.29
+  77      6            350         0.71
+  36      5            180         0.88
+  31      4            178         0.70
+  27      4            148         0.84
+  24      4            102         0.66
+  95      6             77         0.56
+  60      5             42         0.69
+ 
+ 
+ 
+ 
+Fit Statistics
+ 
+Target=y Target Label=y
+ 
+   Fit
+Statistics    Statistics Label                 Train
+ 
+  _NOBS_      Sum of Frequencies            45211.00
+  _MISC_      Misclassification Rate            0.17
+  _MAX_       Maximum Absolute Error            0.96
+  _SSE_       Sum of Squared Errors         10550.46
+  _ASE_       Average Squared Error             0.12
+  _RASE_      Root Average Squared Error        0.34
+  _DIV_       Divisor for ASE               90422.00
+  _DFT_       Total Degrees of Freedom      45211.00
+ 
+ 
+ 
+ 
+Classification Table
+ 
+Data Role=TRAIN Target Variable=y Target Label=y
+ 
+                       Target        Outcome     Frequency       Total
+Target    Outcome    Percentage    Percentage      Count      Percentage
+ 
+ NO         NO         84.6409       94.7434       32172        71.1597
+ YES        NO         15.3591       51.8749        5838        12.9128
+ NO         YES        24.7882        5.2566        1785         3.9482
+ YES        YES        75.2118       48.1251        5416        11.9794
+ 
+ 
+ 
+ 
+Event Classification Table
+ 
+Data Role=TRAIN Target=y Target Label=y
+ 
+  False       True        False       True
+Negative    Negative    Positive    Positive
+ 
+  5838        32172       1785        5416
+ 
+ 
+ 
+ 
+Assessment Score Rankings
+ 
+Data Role=TRAIN Target Variable=y Target Label=y
+ 
+                                                                                           Mean
+                               Cumulative        %       Cumulative      Number of      Posterior
+Depth       Gain      Lift        Lift       Response    % Response    Observations    Probability
+ 
+   5     256.196    3.56196      3.56196      88.6650      88.6650         2261          0.88665
+  10     229.212    3.02228      3.29212      75.2312      81.9481         2261          0.75231
+  15     206.063    2.59743      3.06063      64.6556      76.1857         2260          0.64656
+  20     176.846    1.89208      2.76846      47.0979      68.9129         2261          0.47098
+  25     156.519    1.75185      2.56519      43.6072      63.8531         2260          0.43607
+  30     142.961    1.75185      2.42961      43.6072      60.4783         2261          0.43607
+  35     130.374    1.54827      2.30374      38.5398      57.3450         2260          0.38540
+  40     111.957    0.83063      2.11957      20.6761      52.7607         2261          0.20676
+  45      95.736    0.65931      1.95736      16.4116      48.7229         2260          0.16412
+  50      80.518    0.43588      1.80518      10.8500      44.9349         2261          0.10850
+  55      67.653    0.39028      1.67653       9.7148      41.7326         2261          0.09715
+  60      55.138    0.17425      1.55138       4.3375      38.6171         2260          0.04338
+  65      44.532    0.17291      1.44532       4.3040      35.9772         2261          0.04304
+  70      35.446    0.17291      1.35446       4.3040      33.7154         2260          0.04304
+  75      27.567    0.17291      1.27567       4.3040      31.7543         2261          0.04304
+  80      20.677    0.17291      1.20677       4.3040      30.0391         2260          0.04304
+  85      14.594    0.17291      1.14594       4.3040      28.5250         2261          0.04304
+  90       9.190    0.17291      1.09190       4.3040      27.1797         2260          0.04304
+  95       4.352    0.17291      1.04352       4.3040      25.9755         2261          0.04304
+ 100       0.000    0.17291      1.00000       4.3040      24.8922         2260          0.04304
+ 
+ 
+ 
+ 
+Assessment Score Distribution
+ 
+Data Role=TRAIN Target Variable=y Target Label=y
+ 
+ Posterior     Number                     Mean
+Probability      of      Number of     Posterior
+   Range       Events    Nonevents    Probability    Percentage
+ 
+ 0.90-0.95       883          48        0.94844         2.0592
+ 0.85-0.90       736         103        0.87723         1.8557
+ 0.80-0.85       125          23        0.84459         0.3274
+ 0.75-0.80      1429         451        0.76011         4.1583
+ 0.70-0.75       670         247        0.73064         2.0283
+ 0.65-0.70       602         267        0.69275         1.9221
+ 0.60-0.65       928         612        0.60260         3.4063
+ 0.55-0.60        43          34        0.55844         0.1703
+ 0.45-0.50       238         279        0.46035         1.1435
+ 0.40-0.45      3131        4049        0.43607        15.8811
+ 0.30-0.35       228         484        0.32022         1.5748
+ 0.25-0.30       128         319        0.28635         0.9887
+ 0.20-0.25       245         835        0.22685         2.3888
+ 0.15-0.20       591        3015        0.16389         7.9759
+ 0.05-0.10       402        3736        0.09715         9.1526
+ 0.00-0.05       875       19455        0.04304        44.9669

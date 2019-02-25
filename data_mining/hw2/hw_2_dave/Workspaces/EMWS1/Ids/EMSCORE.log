@@ -1,0 +1,53 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                October 24, 2018
+Time:                15:42:53
+*------------------------------------------------------------*
+12123  *------------------------------------------------------------*;
+12124  * Ids: Computing metadata for DATA data;
+12125  *------------------------------------------------------------*;
+
+NOTE: View EMWS1.IDS_DATA.VIEW used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.10 seconds
+      
+12126  data EMWS1.Ids_EMINFO;
+12127  length TARGET KEY $32 DATA $43;
+12128  TARGET="";
+12129  KEY="IDSTABLE";
+12130  DATA="DATA.FFTSALES";
+12131  output;
+12132  TARGET="y";
+12133  KEY="DECDATA";
+12134  DATA="EMWS1.Ids_y_DD";
+12135  output;
+12136  TARGET="y";
+12137  KEY="DECMETA";
+12138  DATA="EMWS1.Ids_y_DM";
+12139  output;
+12140  run;
+
+NOTE: The data set EMWS1.IDS_EMINFO has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+
+NOTE: View EMWS1.IDS_DATA.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+12141  data EMWS1.Ids_CMeta_DATA;
+12142  set EMWS1.Ids_VariableSet;
+12143  drop DROP;
+12144  where DROP='N';
+12145  run;
+
+NOTE: There were 17 observations read from the data set EMWS1.IDS_VARIABLESET.
+      WHERE DROP='N';
+NOTE: The data set EMWS1.IDS_CMETA_DATA has 17 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.09 seconds
+      
+

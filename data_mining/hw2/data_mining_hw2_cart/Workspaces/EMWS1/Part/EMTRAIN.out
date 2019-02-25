@@ -1,0 +1,23 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+            Measurement    Frequency
+Role           Level         Count
+
+REJECTED     INTERVAL          2    
+TEXT         NOMINAL           1    
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Partition Summary
+
+                                     Number of
+Type             Data Set          Observations
+
+DATA        EMWS1.Ids_DATA             7791    
+TRAIN       EMWS1.Part_TRAIN           5454    
+VALIDATE    EMWS1.Part_VALIDATE        2337    

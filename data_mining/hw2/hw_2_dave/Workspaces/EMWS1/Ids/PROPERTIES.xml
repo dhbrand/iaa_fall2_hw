@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="fftsales" Scope="LOCAL" Role="RAW" Library="DATA" Table="FFTSALES" NCols="17"
+ NObs="45211" NBytes="5112832" Segment="" DataSourceRole="RAW" OutputType="VIEW" ForceRun="N"
+ ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="fftsales"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="IAA-Student" DsCreateDate="1856011878.1"
+ DsModifiedBy="IAA-Student" DsModifyDate="1856011878.2" DsScope="LOCAL" Sample="D"
+ SampleSizeType="PERCENT" SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y"
+ RunAction="Train" Component="DataSource" RawCreateTime="1856011883.3" CreateTime="24OCT2018:14:51:23"
+ Description="" Data="DATA.FFTSALES" CMeta="WORK.M3UEFI1P" RunId="69d78b30-6617-42ca-a496-5849dab82fb8"
+>
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

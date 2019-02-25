@@ -1,0 +1,37 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                October 04, 2018
+Time:                22:36:58
+*------------------------------------------------------------*
+12038  *------------------------------------------------------------*;
+12039  * Ids: Computing metadata for DATA data;
+12040  *------------------------------------------------------------*;
+
+12041  data EMWS1.Ids_EMINFO;
+12042  length TARGET KEY $32 DATA $43;
+12043  TARGET="";
+12044  KEY="IDSTABLE";
+12045  DATA="DM.RESTAURANTDATA";
+12046  output;
+12047  run;
+
+NOTE: The data set EMWS1.IDS_EMINFO has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+      
+
+12048  data EMWS1.Ids_CMeta_DATA;
+12049  set EMWS1.Ids_VariableSet;
+12050  drop DROP;
+12051  where DROP='N';
+12052  run;
+
+NOTE: There were 2 observations read from the data set EMWS1.IDS_VARIABLESET.
+      WHERE DROP='N';
+NOTE: The data set EMWS1.IDS_CMETA_DATA has 2 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+      
+

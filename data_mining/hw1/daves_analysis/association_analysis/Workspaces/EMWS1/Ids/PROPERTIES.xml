@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  DataSource="restaurantdata" Scope="LOCAL" Role="TRANSACTION" Library="DM" Table="RESTAURANTDATA"
+ NCols="3" NObs="26682" NBytes="918528" Segment="" DataSourceRole="TRANSACTION" OutputType="VIEW"
+ ForceRun="N" ComputeStatistics="N" DataSelection="DATASOURCE" NewTable="" MetaAdvisor="BASIC"
+ ApplyIntervalLevelLowerLimit="Y" IntervalLowerLimit="20" ApplyMaxPercentMissing="Y"
+ MaxPercentMissing="50" ApplyMaxClassLevels="Y" MaxClassLevels="20" IdentifyEmptyColumns="Y"
+ VariableValidation="STRICT" NewVariableRole="REJECT" DropMapVariables="Y" DsId="restaurantdata"
+ DsSampleName="" DsSampleSizeType="" DsSampleSize="" DsCreatedBy="IAA-Student" DsCreateDate="1854311769.4"
+ DsModifiedBy="IAA-Student" DsModifyDate="1854311769.5" DsScope="LOCAL" Sample="D"
+ SampleSizeType="PERCENT" SampleSizePercent="20" SampleSizeObs="10000" DBPassThrough="Y"
+ RunAction="Train" Component="DataSource" RawCreateTime="1854311774.9" CreateTime="04OCT2018:22:36:15"
+ Description="" Data="DM.RESTAURANTDATA" CMeta="WORK.M2TBMBCY" RunId="82522ab5-9ccf-4094-910f-54cdaf168dfa"
+>
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

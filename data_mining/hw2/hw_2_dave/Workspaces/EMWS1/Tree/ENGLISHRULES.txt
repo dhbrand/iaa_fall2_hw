@@ -1,0 +1,279 @@
+*------------------------------------------------------------*
+ Node = 8
+*------------------------------------------------------------*
+if last_campaign_outcome IS ONE OF: SUCCESS
+AND balance < 896374 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 8
+ Number of Observations = 659
+ Predicted: y=yes = 0.88
+ Predicted: y=no = 0.12
+ 
+*------------------------------------------------------------*
+ Node = 10
+*------------------------------------------------------------*
+if balance < 1146638 AND balance >= 896374 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 10
+ Number of Observations = 1880
+ Predicted: y=yes = 0.76
+ Predicted: y=no = 0.24
+ 
+*------------------------------------------------------------*
+ Node = 11
+*------------------------------------------------------------*
+if balance >= 1146638
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 11
+ Number of Observations = 931
+ Predicted: y=yes = 0.95
+ Predicted: y=no = 0.05
+ 
+*------------------------------------------------------------*
+ Node = 24
+*------------------------------------------------------------*
+if last_campaign_outcome IS ONE OF: SUCCESS
+AND balance < 883671 or MISSING
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 24
+ Number of Observations = 102
+ Predicted: y=yes = 0.66
+ Predicted: y=no = 0.34
+ 
+*------------------------------------------------------------*
+ Node = 26
+*------------------------------------------------------------*
+if balance < 1167668 AND balance >= 883671 or MISSING
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 26
+ Number of Observations = 517
+ Predicted: y=yes = 0.46
+ Predicted: y=no = 0.54
+ 
+*------------------------------------------------------------*
+ Node = 27
+*------------------------------------------------------------*
+if balance >= 1167668
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 27
+ Number of Observations = 148
+ Predicted: y=yes = 0.84
+ Predicted: y=no = 0.16
+ 
+*------------------------------------------------------------*
+ Node = 28
+*------------------------------------------------------------*
+if last_campaign_outcome IS ONE OF: SUCCESS
+AND balance < 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 28
+ Number of Observations = 447
+ Predicted: y=yes = 0.29
+ Predicted: y=no = 0.71
+ 
+*------------------------------------------------------------*
+ Node = 31
+*------------------------------------------------------------*
+if balance >= 1246601
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 31
+ Number of Observations = 178
+ Predicted: y=yes = 0.70
+ Predicted: y=no = 0.30
+ 
+*------------------------------------------------------------*
+ Node = 36
+*------------------------------------------------------------*
+if val_email IS ONE OF: YES
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 87919.5
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 36
+ Number of Observations = 180
+ Predicted: y=yes = 0.88
+ Predicted: y=no = 0.12
+ 
+*------------------------------------------------------------*
+ Node = 38
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 85386.5
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 38
+ Number of Observations = 547
+ Predicted: y=yes = 0.70
+ Predicted: y=no = 0.30
+ 
+*------------------------------------------------------------*
+ Node = 50
+*------------------------------------------------------------*
+if val_email IS ONE OF: YES
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 883671 or MISSING
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 50
+ Number of Observations = 712
+ Predicted: y=yes = 0.32
+ Predicted: y=no = 0.68
+ 
+*------------------------------------------------------------*
+ Node = 58
+*------------------------------------------------------------*
+if val_email IS ONE OF: YES
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 58
+ Number of Observations = 4138
+ Predicted: y=yes = 0.10
+ Predicted: y=no = 0.90
+ 
+*------------------------------------------------------------*
+ Node = 60
+*------------------------------------------------------------*
+if last_campaign_outcome IS ONE OF: SUCCESS
+AND balance < 1246601 AND balance >= 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 60
+ Number of Observations = 42
+ Predicted: y=yes = 0.69
+ Predicted: y=no = 0.31
+ 
+*------------------------------------------------------------*
+ Node = 61
+*------------------------------------------------------------*
+if last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 1246601 AND balance >= 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 61
+ Number of Observations = 1080
+ Predicted: y=yes = 0.23
+ Predicted: y=no = 0.77
+ 
+*------------------------------------------------------------*
+ Node = 72
+*------------------------------------------------------------*
+if val_email IS ONE OF: YES
+AND month IS ONE OF: MAY, JUN, JUL, AUG, JAN or MISSING
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 896374 AND balance >= 87919.5 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 72
+ Number of Observations = 1540
+ Predicted: y=yes = 0.60
+ Predicted: y=no = 0.40
+ 
+*------------------------------------------------------------*
+ Node = 73
+*------------------------------------------------------------*
+if val_email IS ONE OF: YES
+AND month IS ONE OF: OCT, NOV, DEC, FEB, MAR, APR, SEP
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 896374 AND balance >= 87919.5 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 73
+ Number of Observations = 567
+ Predicted: y=yes = 0.74
+ Predicted: y=no = 0.26
+ 
+*------------------------------------------------------------*
+ Node = 76
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: MAY, JUN, JUL, AUG, NOV, JAN, FEB, APR or MISSING
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 896374 AND balance >= 85386.5 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 76
+ Number of Observations = 7180
+ Predicted: y=yes = 0.44
+ Predicted: y=no = 0.56
+ 
+*------------------------------------------------------------*
+ Node = 77
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: OCT, DEC, MAR, SEP
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 896374 AND balance >= 85386.5 or MISSING
+AND ConsumerGroup IS ONE OF: B
+then 
+ Tree Node Identifier   = 77
+ Number of Observations = 350
+ Predicted: y=yes = 0.71
+ Predicted: y=no = 0.29
+ 
+*------------------------------------------------------------*
+ Node = 94
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: MAY, JUN, JUL, AUG, NOV, DEC, JAN, FEB, APR, SEP or MISSING
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 883671 or MISSING
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 94
+ Number of Observations = 3043
+ Predicted: y=yes = 0.16
+ Predicted: y=no = 0.84
+ 
+*------------------------------------------------------------*
+ Node = 95
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: OCT, MAR
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 883671 or MISSING
+AND ConsumerGroup IS ONE OF: C, D
+then 
+ Tree Node Identifier   = 95
+ Number of Observations = 77
+ Predicted: y=yes = 0.56
+ Predicted: y=no = 0.44
+ 
+*------------------------------------------------------------*
+ Node = 110
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: OCT, DEC, MAR, SEP
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 110
+ Number of Observations = 563
+ Predicted: y=yes = 0.16
+ Predicted: y=no = 0.84
+ 
+*------------------------------------------------------------*
+ Node = 111
+*------------------------------------------------------------*
+if val_email IS ONE OF: NO or MISSING
+AND month IS ONE OF: MAY, JUN, JUL, AUG, NOV, JAN, FEB, APR or MISSING
+AND last_campaign_outcome IS ONE OF: UNKNOWN, FAILURE, OTHER or MISSING
+AND balance < 993551 or MISSING
+AND ConsumerGroup IS ONE OF: A or MISSING
+then 
+ Tree Node Identifier   = 111
+ Number of Observations = 20330
+ Predicted: y=yes = 0.04
+ Predicted: y=no = 0.96
+ 

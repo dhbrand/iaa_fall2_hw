@@ -1,0 +1,38 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+ Role        Level         Count
+
+INPUT      INTERVAL           6   
+INPUT      NOMINAL           10   
+TARGET     NOMINAL            1   
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Model Events
+
+                                  Number
+                   Measurement      of
+Target    Event       Level       Levels      Order       Label
+
+  y        YES       NOMINAL         2      Descending      y  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Predicted and decision variables
+
+Type         Variable    Label
+
+TARGET        y          y               
+PREDICTED     P_yyes     Predicted: y=yes
+RESIDUAL      R_yyes     Residual: y=yes 
+PREDICTED     P_yno      Predicted: y=no 
+RESIDUAL      R_yno      Residual: y=no  
+FROM          F_y        From: y         
+INTO          I_y        Into: y         

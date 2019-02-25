@@ -1,0 +1,18 @@
+app_key,pdNRXHD4JMj3zUnDvvZEcpwFm
+app_secret,apOaCwGgVlhOj0gswD6Dd9ejBsY81omTTD1WgQGotIkuAzMLPb
+oauth_key,947931818-cJwZ2c7jHhmhHcRH5bLhOJlkwc590BxCOAvy9qf8
+oauth_secret,vpX9iQHBEutpTGxIzaoEpzf2WgbU1tjhxbCo8TAM5xLgc
+json,False
+prefix,dave_1_1000_
+index_n,1
+tw_file_n,1000
+dir,
+sql_box,False
+sql_db,
+sql_tbl,
+sql_usr,
+sql_host,
+tw_n,1000
+lang,4
+email,
+term,iphone xs, iphone xr
